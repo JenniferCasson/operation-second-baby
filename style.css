@@ -1,1 +1,1437 @@
+:root {
+    --forest: #315c4c;
+    --forest-dark: #1f4034;
+    --forest-light: #e8f2ed;
 
+    --sage: #91a996;
+    --sage-light: #f0f5f1;
+
+    --cream: #fffaf0;
+    --warm-white: #fffdf8;
+    --sand: #eadfc9;
+
+    --gold: #d6a642;
+    --gold-light: #fff3cf;
+
+    --sky: #dcecf3;
+    --blue: #567b8c;
+
+    --plum: #6b536d;
+    --plum-light: #f2ebf3;
+
+    --ink: #1f2924;
+    --muted: #66726c;
+    --border: #ddd7c9;
+
+    --shadow:
+        0 18px 50px rgba(39, 67, 54, 0.12);
+
+    --small-shadow:
+        0 7px 20px rgba(39, 67, 54, 0.1);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    padding: 22px 14px 60px;
+    overflow-x: hidden;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    color: var(--ink);
+
+    background:
+        radial-gradient(
+            circle at top left,
+            rgba(214, 166, 66, 0.17),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at top right,
+            rgba(86, 123, 140, 0.15),
+            transparent 30%
+        ),
+        linear-gradient(
+            180deg,
+            #f7f3e8 0%,
+            #edf4ef 50%,
+            #e5eef1 100%
+        );
+}
+
+button,
+input,
+textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+#celebrationCanvas {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.app {
+    width: min(1240px, 100%);
+    margin: 0 auto;
+}
+
+/* Header */
+
+.hero {
+    position: relative;
+
+    margin-bottom: 22px;
+    padding: 38px 30px 34px;
+
+    overflow: hidden;
+
+    border: 1px solid var(--border);
+    border-radius: 28px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 253, 248, 0.96),
+            rgba(232, 242, 237, 0.96)
+        );
+
+    text-align: center;
+
+    box-shadow: var(--shadow);
+}
+
+.hero::before,
+.hero::after {
+    content: "";
+
+    position: absolute;
+
+    width: 170px;
+    height: 170px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(214, 166, 66, 0.08);
+}
+
+.hero::before {
+    top: -85px;
+    left: -65px;
+}
+
+.hero::after {
+    right: -70px;
+    bottom: -95px;
+}
+
+.hero-birds {
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+
+    margin-bottom: 10px;
+
+    color: var(--forest);
+
+    font-size: 2rem;
+}
+
+.hero-birds span:nth-child(1) {
+    transform: rotate(-8deg);
+}
+
+.hero-birds span:nth-child(2) {
+    transform: translateY(-7px);
+}
+
+.hero-birds span:nth-child(3) {
+    transform: rotate(8deg);
+}
+
+.hero h1 {
+    position: relative;
+    z-index: 2;
+
+    margin: 0;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        clamp(2.4rem, 6vw, 5rem);
+
+    line-height: 1;
+
+    color: var(--forest-dark);
+}
+
+.hero-subtitle {
+    position: relative;
+    z-index: 2;
+
+    max-width: 680px;
+    margin: 14px auto 0;
+
+    font-size:
+        clamp(1rem, 2vw, 1.25rem);
+
+    font-weight: 700;
+    line-height: 1.5;
+
+    color: var(--muted);
+}
+
+.due-date-pill {
+    position: relative;
+    z-index: 2;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-top: 22px;
+    padding: 11px 18px;
+
+    border: 1px solid #d7c99e;
+    border-radius: 999px;
+
+    background: var(--gold-light);
+
+    color: #5d4a1e;
+
+    font-size: 0.92rem;
+}
+
+.due-date-pill > span:first-child {
+    font-size: 1.4rem;
+}
+
+.eyebrow {
+    margin: 0 0 6px;
+
+    color: var(--forest);
+
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+/* Shared cards */
+
+.current-week-card,
+.science-card,
+.bird-fact-card,
+.parent-card,
+.weekly-mission-card,
+.countdown-card,
+.stork-route-card,
+.statistics-card,
+.milestone-card,
+.timeline-section,
+.weekly-memory-card {
+    border: 1px solid var(--border);
+    border-radius: 24px;
+
+    background:
+        rgba(255, 253, 248, 0.96);
+
+    box-shadow: var(--shadow);
+}
+
+.current-week-card {
+    margin-bottom: 22px;
+    padding: 26px;
+}
+
+.week-card-header,
+.section-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+
+    margin-bottom: 20px;
+}
+
+.week-card-header h2,
+.section-heading h2 {
+    margin: 0;
+
+    color: var(--forest-dark);
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        clamp(1.45rem, 3vw, 2.2rem);
+}
+
+.trimester-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 44px;
+    padding: 9px 16px;
+
+    border-radius: 999px;
+
+    background: var(--forest);
+
+    color: white;
+
+    font-size: 0.82rem;
+    font-weight: 900;
+    text-align: center;
+}
+
+.week-feature {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 20px;
+}
+
+.size-comparison,
+.bird-comparison {
+    min-height: 310px;
+    padding: 24px;
+
+    border-radius: 20px;
+
+    text-align: center;
+}
+
+.size-comparison {
+    background:
+        linear-gradient(
+            145deg,
+            #fff7dd,
+            #fffdf7
+        );
+
+    border:
+        1px solid #ead6a0;
+}
+
+.bird-comparison {
+    background:
+        linear-gradient(
+            145deg,
+            #eaf3f0,
+            #f9fcfa
+        );
+
+    border:
+        1px solid #c9ddd3;
+}
+
+.size-emoji,
+.bird-emoji {
+    display: grid;
+    place-items: center;
+
+    min-height: 130px;
+
+    font-size:
+        clamp(5rem, 11vw, 8rem);
+
+    animation:
+        gentleFloat 3s ease-in-out infinite;
+}
+
+.size-comparison h3,
+.bird-comparison h3 {
+    margin: 8px 0 10px;
+
+    color: var(--forest-dark);
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        clamp(1.5rem, 3vw, 2.25rem);
+}
+
+.size-comparison p,
+.bird-comparison p {
+    max-width: 430px;
+    margin-right: auto;
+    margin-left: auto;
+
+    color: var(--muted);
+    line-height: 1.55;
+}
+
+.size-description {
+    font-size: 0.9rem;
+}
+
+/* Dashboard */
+
+.dashboard {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1.55fr)
+        minmax(290px, 0.65fr);
+
+    gap: 22px;
+}
+
+.main-column,
+.side-column {
+    display: grid;
+    align-content: start;
+    gap: 22px;
+}
+
+.science-card,
+.bird-fact-card,
+.parent-card,
+.weekly-mission-card,
+.countdown-card,
+.stork-route-card,
+.statistics-card,
+.milestone-card {
+    padding: 24px;
+}
+
+.science-icon {
+    font-size: 2.2rem;
+}
+
+/* Science facts */
+
+.fact-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 14px;
+}
+
+.fact-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+
+    min-height: 160px;
+    padding: 17px;
+
+    border: 1px solid #d8e2dc;
+    border-radius: 17px;
+
+    background: var(--sage-light);
+}
+
+.fact-icon {
+    flex: 0 0 auto;
+
+    font-size: 2rem;
+}
+
+.fact-card h3 {
+    margin: 0 0 7px;
+
+    color: var(--forest-dark);
+
+    font-size: 1rem;
+}
+
+.fact-card p {
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: 0.87rem;
+    line-height: 1.5;
+}
+
+.science-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+
+    margin-top: 17px;
+    padding: 14px;
+
+    border-left: 5px solid var(--gold);
+    border-radius: 12px;
+
+    background: var(--gold-light);
+}
+
+.science-note > span {
+    font-size: 1.5rem;
+}
+
+.science-note p {
+    margin: 0;
+
+    color: #64542b;
+
+    font-size: 0.82rem;
+    line-height: 1.5;
+}
+
+/* Bird fact */
+
+.bird-fact-card {
+    background:
+        linear-gradient(
+            145deg,
+            #edf5f7,
+            #fffdf8
+        );
+}
+
+.bird-fact-card blockquote {
+    position: relative;
+
+    margin: 0;
+    padding: 22px 25px;
+
+    border-left: 6px solid var(--blue);
+    border-radius: 16px;
+
+    background: white;
+
+    color: #344d57;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        clamp(1.1rem, 2.4vw, 1.55rem);
+
+    font-style: italic;
+    line-height: 1.55;
+}
+
+.bird-fact-card blockquote::before {
+    content: "“";
+
+    position: absolute;
+    top: -8px;
+    left: 8px;
+
+    color: rgba(86, 123, 140, 0.18);
+
+    font-size: 5rem;
+    line-height: 1;
+}
+
+.fact-footnote {
+    margin: 12px 0 0;
+
+    color: var(--muted);
+
+    font-size: 0.76rem;
+}
+
+/* Parent cards */
+
+.parent-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 14px;
+}
+
+.parent-note {
+    min-height: 155px;
+    padding: 18px;
+
+    border-radius: 17px;
+}
+
+.parent-note:first-child {
+    border: 1px solid #ddcfe0;
+    background: var(--plum-light);
+}
+
+.parent-note:last-child {
+    border: 1px solid #cadfd5;
+    background: var(--forest-light);
+}
+
+.parent-note h3 {
+    margin: 0 0 8px;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 1.25rem;
+}
+
+.parent-note p {
+    margin: 0;
+
+    color: var(--muted);
+    line-height: 1.55;
+}
+
+/* Mission */
+
+.weekly-mission-card {
+    display: grid;
+    grid-template-columns:
+        auto minmax(0, 1fr) auto;
+
+    align-items: center;
+    gap: 18px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #fff8df,
+            #fffdf8
+        );
+
+    border-color: #e6d29c;
+}
+
+.mission-icon {
+    font-size: 3.2rem;
+}
+
+.mission-copy h2 {
+    margin: 0 0 8px;
+
+    color: var(--forest-dark);
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+}
+
+.mission-copy p {
+    margin: 0;
+
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+.mission-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    cursor: pointer;
+
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.mission-checkbox input {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    opacity: 0;
+}
+
+.custom-checkbox {
+    display: grid;
+    place-items: center;
+
+    width: 31px;
+    height: 31px;
+
+    border: 2px solid #b9b5aa;
+    border-radius: 9px;
+
+    background: white;
+    color: transparent;
+
+    font-weight: 900;
+
+    transition: 0.18s ease;
+}
+
+.mission-checkbox input:checked + .custom-checkbox {
+    border-color: var(--forest);
+    background: var(--forest);
+    color: white;
+}
+
+/* Countdown */
+
+.countdown-card {
+    text-align: center;
+
+    background:
+        linear-gradient(
+            155deg,
+            #315c4c,
+            #1f4034
+        );
+
+    color: white;
+}
+
+.countdown-card .eyebrow {
+    color: #dceee4;
+}
+
+.countdown-card > strong {
+    display: block;
+
+    margin-top: 8px;
+
+    color: white;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        clamp(4rem, 10vw, 6.5rem);
+
+    line-height: 1;
+}
+
+.countdown-card > span {
+    display: block;
+
+    margin-top: 7px;
+
+    color: #d9e8df;
+
+    font-size: 0.84rem;
+}
+
+.countdown-progress {
+    height: 16px;
+    margin-top: 20px;
+
+    overflow: hidden;
+
+    border-radius: 999px;
+
+    background:
+        rgba(255, 255, 255, 0.18);
+}
+
+.countdown-progress-fill {
+    width: 0;
+    height: 100%;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(
+            90deg,
+            #e6bb55,
+            #fff0ae
+        );
+
+    transition: width 0.7s ease;
+}
+
+#pregnancyPercentage {
+    margin: 12px 0 0;
+
+    color: #dceee4;
+
+    font-size: 0.8rem;
+}
+
+/* Stork route */
+
+.stork-route-card {
+    background:
+        linear-gradient(
+            145deg,
+            #edf6fa,
+            #fffdf8
+        );
+}
+
+.stork-route {
+    display: grid;
+    grid-template-columns:
+        auto minmax(100px, 1fr) auto;
+
+    align-items: center;
+    gap: 10px;
+
+    margin: 22px 0 15px;
+}
+
+.route-start,
+.route-finish {
+    display: grid;
+    justify-items: center;
+    gap: 4px;
+
+    text-align: center;
+}
+
+.route-start > span,
+.route-finish > span {
+    font-size: 2.2rem;
+}
+
+.route-start small,
+.route-finish small {
+    color: var(--muted);
+
+    font-size: 0.66rem;
+}
+
+.route-line {
+    position: relative;
+
+    height: 7px;
+
+    border-radius: 999px;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            var(--sage) 0 11px,
+            transparent 11px 18px
+        );
+}
+
+.stork-traveller {
+    position: absolute;
+    top: 50%;
+    left: 0;
+
+    font-size: 2.4rem;
+
+    transform:
+        translate(-50%, -50%);
+
+    transition:
+        left 0.8s
+        cubic-bezier(.2, .85, .32, 1.25);
+
+    animation:
+        storkBob 1.8s ease-in-out infinite;
+}
+
+#storkMessage {
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: 0.82rem;
+    line-height: 1.5;
+}
+
+/* Statistics */
+
+.statistics-list {
+    display: grid;
+    gap: 3px;
+}
+
+.statistic {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+
+    padding: 12px 0;
+
+    border-bottom:
+        1px solid #ebe4d8;
+}
+
+.statistic:last-child {
+    border-bottom: 0;
+}
+
+.statistic span {
+    color: var(--muted);
+
+    font-size: 0.85rem;
+}
+
+.statistic strong {
+    text-align: right;
+
+    color: var(--forest-dark);
+}
+
+.capricorn-note {
+    margin: 14px 0 0;
+    padding: 12px;
+
+    border-radius: 12px;
+
+    background: var(--plum-light);
+
+    color: var(--plum);
+
+    font-size: 0.78rem;
+    line-height: 1.5;
+}
+
+/* Milestone */
+
+.milestone-card {
+    text-align: center;
+
+    background:
+        linear-gradient(
+            145deg,
+            #fff6da,
+            #fffdf8
+        );
+}
+
+.milestone-icon {
+    display: block;
+
+    margin: 11px 0 8px;
+
+    font-size: 4rem;
+
+    animation:
+        gentleFloat 3s ease-in-out infinite;
+}
+
+.milestone-card h2 {
+    margin: 0 0 9px;
+
+    color: var(--forest-dark);
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+}
+
+.milestone-card p {
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: 0.86rem;
+    line-height: 1.5;
+}
+
+/* Timeline */
+
+.timeline-section {
+    margin-top: 22px;
+    padding: 25px;
+}
+
+.week-timeline {
+    display: grid;
+    grid-template-columns:
+        repeat(10, minmax(70px, 1fr));
+
+    gap: 10px;
+
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+.week-marker {
+    position: relative;
+
+    display: grid;
+    place-items: center;
+    gap: 4px;
+
+    min-width: 75px;
+    min-height: 76px;
+    padding: 9px;
+
+    border: 1px solid #ded9cd;
+    border-radius: 14px;
+
+    background: white;
+
+    color: var(--muted);
+
+    text-align: center;
+
+    transition:
+        transform 0.15s ease,
+        border-color 0.15s ease,
+        background 0.15s ease;
+}
+
+.week-marker:hover {
+    transform: translateY(-2px);
+
+    border-color: var(--sage);
+}
+
+.week-marker strong {
+    font-size: 0.8rem;
+}
+
+.week-marker span {
+    font-size: 1.3rem;
+}
+
+.week-marker--complete {
+    border-color: #9cbea8;
+    background: var(--forest-light);
+    color: var(--forest-dark);
+}
+
+.week-marker--current {
+    border: 3px solid var(--gold);
+    background: var(--gold-light);
+    color: #69521c;
+
+    box-shadow:
+        0 0 0 5px
+        rgba(214, 166, 66, 0.14);
+}
+
+/* Memory */
+
+.weekly-memory-card {
+    display: grid;
+    grid-template-columns:
+        minmax(220px, 0.7fr)
+        minmax(0, 1.3fr);
+
+    align-items: end;
+    gap: 20px;
+
+    margin-top: 22px;
+    padding: 25px;
+}
+
+.weekly-memory-card h2 {
+    margin: 0 0 7px;
+
+    color: var(--forest-dark);
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+}
+
+.weekly-memory-card p {
+    margin: 0;
+
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+.weekly-memory-card textarea {
+    grid-column: 2;
+
+    width: 100%;
+    min-height: 130px;
+    padding: 14px;
+
+    resize: vertical;
+
+    border: 1px solid #cfd9d3;
+    border-radius: 14px;
+
+    background: white;
+    color: var(--ink);
+
+    line-height: 1.5;
+}
+
+.weekly-memory-card textarea:focus {
+    outline: 3px solid rgba(49, 92, 76, 0.16);
+    border-color: var(--forest);
+}
+
+.primary-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 46px;
+    padding: 12px 18px;
+
+    border: 0;
+    border-radius: 13px;
+
+    background: var(--forest);
+    color: white;
+
+    font-weight: 900;
+
+    box-shadow:
+        0 5px 0 var(--forest-dark);
+}
+
+.primary-button:hover {
+    background: #3d6e5b;
+}
+
+.primary-button:active {
+    transform: translateY(2px);
+
+    box-shadow:
+        0 3px 0 var(--forest-dark);
+}
+
+.saved-message {
+    min-height: 20px;
+
+    color: var(--forest);
+
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+
+/* Footer */
+
+.app-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    padding: 30px 20px 5px;
+
+    color: var(--muted);
+
+    text-align: center;
+}
+
+.app-footer > span {
+    font-size: 1.5rem;
+}
+
+.app-footer p {
+    margin: 0;
+
+    font-size: 0.78rem;
+}
+
+/* Modal */
+
+.modal[hidden] {
+    display: none;
+}
+
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 18px;
+}
+
+.modal-backdrop {
+    position: absolute;
+    inset: 0;
+
+    background:
+        rgba(23, 42, 34, 0.67);
+
+    backdrop-filter: blur(5px);
+}
+
+.modal-card {
+    position: relative;
+    z-index: 2;
+
+    width: min(430px, 100%);
+    max-height: calc(100vh - 36px);
+    padding: 30px;
+
+    overflow-y: auto;
+
+    border: 3px solid var(--gold);
+    border-radius: 26px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #fffdf8,
+            #fff5d4
+        );
+
+    text-align: center;
+
+    box-shadow:
+        0 30px 90px rgba(0, 0, 0, 0.35);
+
+    animation:
+        modalPop 0.35s ease;
+}
+
+.modal-bird {
+    margin-bottom: 6px;
+
+    font-size: 4.2rem;
+
+    animation:
+        storkBob 1.8s ease-in-out infinite;
+}
+
+.modal-card h2 {
+    margin: 4px 0 10px;
+
+    color: var(--forest-dark);
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        clamp(1.8rem, 5vw, 2.6rem);
+}
+
+.modal-card > p:not(.eyebrow) {
+    margin: 0 auto 20px;
+
+    color: var(--muted);
+    line-height: 1.55;
+}
+
+/* Animations */
+
+@keyframes gentleFloat {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes storkBob {
+    0%,
+    100% {
+        transform:
+            translate(-50%, -50%)
+            rotate(-4deg);
+    }
+
+    50% {
+        transform:
+            translate(-50%, calc(-50% - 8px))
+            rotate(4deg);
+    }
+}
+
+@keyframes modalPop {
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(18px)
+            scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+/* Tablet */
+
+@media (max-width: 920px) {
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .side-column {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .countdown-card,
+    .stork-route-card,
+    .statistics-card,
+    .milestone-card {
+        min-width: 0;
+    }
+
+    .fact-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .fact-card {
+        min-height: auto;
+    }
+
+    .weekly-memory-card {
+        grid-template-columns: 1fr;
+        align-items: stretch;
+    }
+
+    .weekly-memory-card textarea {
+        grid-column: auto;
+    }
+}
+
+/* Phone */
+
+@media (max-width: 650px) {
+    body {
+        padding: 10px 8px 40px;
+    }
+
+    .hero {
+        padding: 30px 17px 27px;
+        border-radius: 20px;
+    }
+
+    .hero-birds {
+        font-size: 1.6rem;
+    }
+
+    .current-week-card,
+    .science-card,
+    .bird-fact-card,
+    .parent-card,
+    .weekly-mission-card,
+    .countdown-card,
+    .stork-route-card,
+    .statistics-card,
+    .milestone-card,
+    .timeline-section,
+    .weekly-memory-card {
+        border-radius: 18px;
+    }
+
+    .current-week-card,
+    .science-card,
+    .bird-fact-card,
+    .parent-card,
+    .weekly-mission-card,
+    .countdown-card,
+    .stork-route-card,
+    .statistics-card,
+    .milestone-card,
+    .timeline-section,
+    .weekly-memory-card {
+        padding: 17px;
+    }
+
+    .week-card-header,
+    .section-heading {
+        align-items: flex-start;
+    }
+
+    .trimester-badge {
+        max-width: 130px;
+        min-height: 40px;
+        padding: 8px 11px;
+    }
+
+    .week-feature {
+        grid-template-columns: 1fr;
+    }
+
+    .size-comparison,
+    .bird-comparison {
+        min-height: 270px;
+        padding: 18px;
+    }
+
+    .parent-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .weekly-mission-card {
+        grid-template-columns:
+            auto minmax(0, 1fr);
+    }
+
+    .mission-checkbox {
+        grid-column: 1 / -1;
+
+        justify-self: start;
+    }
+
+    .side-column {
+        grid-template-columns: 1fr;
+    }
+
+    .week-timeline {
+        grid-template-columns:
+            repeat(10, 76px);
+    }
+
+    .weekly-memory-card {
+        gap: 14px;
+    }
+
+    .app-footer {
+        align-items: flex-start;
+    }
+
+    .modal-card {
+        padding: 23px 18px;
+    }
+}
+
+/* Reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behaviour: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
