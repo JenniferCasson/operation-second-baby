@@ -1249,15 +1249,21 @@ function renderMilestone(currentWeek) {
 /* --------------------------------------------------
    TIMELINE
 -------------------------------------------------- */
-
 function renderTimeline(currentWeek) {
     weekTimeline.innerHTML = "";
 
+    const reviewedWeeks =
+        readStoredObject(
+            reviewedWeeksStorageKey
+        );
+
     for (let week = 1; week <= 40; week += 1) {
         const marker =
-            document.createElement("div");
+            document.createElement("button");
 
+        marker.type = "button";
         marker.className = "week-marker";
+        marker.dataset.week = String(week);
 
         if (week < currentWeek) {
             marker.classList.add(
@@ -1268,6 +1274,12 @@ function renderTimeline(currentWeek) {
         if (week === currentWeek) {
             marker.classList.add(
                 "week-marker--current"
+            );
+        }
+
+        if (reviewedWeeks[week]) {
+            marker.classList.add(
+                "week-marker--reviewed"
             );
         }
 
@@ -1289,9 +1301,14 @@ function renderTimeline(currentWeek) {
         `;
 
         marker.title =
-            weekData[week]
-                ? `${weekData[week].sizeName}`
-                : `Pregnancy week ${week}`;
+            `Open pregnancy week ${week}`;
+
+        marker.addEventListener(
+            "click",
+            () => {
+                openWeekReview(week);
+            }
+        );
 
         weekTimeline.appendChild(marker);
     }
@@ -1308,6 +1325,77 @@ function renderTimeline(currentWeek) {
             inline: "center"
         });
     }, 200);
+}
+function openWeekReview(week) {
+    selectedReviewWeek = week;
+
+    const information =
+        getWeekInformation(
+            Math.max(4, week)
+        );
+
+    const reviewedWeeks =
+        readStoredObject(
+            reviewedWeeksStorageKey
+        );
+
+    weekReviewTitle.textContent =
+        `Pregnancy Week ${week}`;
+
+    weekReviewSizeEmoji.textContent =
+        week < 4
+            ? "🌱"
+            : information.sizeEmoji;
+
+    weekReviewSizeName.textContent =
+        week < 4
+            ? "early development"
+            : information.sizeName;
+
+    weekReviewSizeDescription.textContent =
+        week < 4
+            ? "The pregnancy is in its earliest stage."
+            : information.sizeDescription;
+
+    weekReviewBirdEmoji.textContent =
+        information.birdEmoji;
+
+    weekReviewBirdName.textContent =
+        information.birdName;
+
+    weekReviewBirdText.textContent =
+        information.birdText;
+
+    weekReviewFacts.innerHTML =
+        information.facts
+            .map(([icon, heading, text]) => `
+                <article class="week-review-fact">
+                    <span aria-hidden="true">
+                        ${icon}
+                    </span>
+
+                    <div>
+                        <h3>${heading}</h3>
+                        <p>${text}</p>
+                    </div>
+                </article>
+            `)
+            .join("");
+
+    weekReviewBirdFact.textContent =
+        information.birdFact;
+
+    weekReviewedCheckbox.checked =
+        Boolean(reviewedWeeks[week]);
+
+    weekReviewModal.hidden = false;
+
+    closeWeekReviewButton.focus();
+}
+
+function closeWeekReview() {
+    weekReviewModal.hidden = true;
+    selectedReviewWeek = null;
 }
 
 /* --------------------------------------------------
@@ -1337,6 +1425,58 @@ weeklyMissionCheckbox.addEventListener(
                 window.innerHeight / 2,
                 100
             );
+        }
+    }
+);
+weekReviewedCheckbox.addEventListener(
+    "change",
+    () => {
+        if (!selectedReviewWeek) {
+            return;
+        }
+
+        const reviewedWeeks =
+            readStoredObject(
+                reviewedWeeksStorageKey
+            );
+
+        reviewedWeeks[selectedReviewWeek] =
+            weekReviewedCheckbox.checked;
+
+        writeStoredObject(
+            reviewedWeeksStorageKey,
+            reviewedWeeks
+        );
+
+        const currentWeek =
+            calculatePregnancy().week;
+
+        renderTimeline(currentWeek);
+
+        if (weekReviewedCheckbox.checked) {
+            launchFeatherCelebration(
+                window.innerWidth / 2,
+                window.innerHeight / 2,
+                80
+            );
+        }
+    }
+);
+
+closeWeekReviewButton.addEventListener(
+    "click",
+    closeWeekReview
+);
+
+weekReviewModal.addEventListener(
+    "click",
+    event => {
+        if (
+            event.target.classList.contains(
+                "modal-backdrop"
+            )
+        ) {
+            closeWeekReview();
         }
     }
 );
@@ -1497,6 +1637,12 @@ document.addEventListener(
         ) {
             closeCelebration();
         }
+        if (
+    event.key === "Escape" &&
+    !weekReviewModal.hidden
+) {
+    closeWeekReview();
+}
     }
 );
 
@@ -1719,3 +1865,234 @@ window.addEventListener(
 
 resizeCelebrationCanvas();
 renderApp();
+.timeline-intro {
+    margin: -8px 0 18px;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+.week-marker {
+    cursor: pointer;
+}
+
+.week-marker::after {
+    content: "Open";
+
+    font-size: 0.6rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+
+    color: var(--forest);
+}
+
+.week-marker--reviewed::after {
+    content: "Reviewed";
+}
+
+.week-marker--reviewed {
+    border-color: var(--forest);
+    background: var(--forest-light);
+}
+
+.week-marker--reviewed::before {
+    content: "✓";
+
+    position: absolute;
+    top: 5px;
+    right: 6px;
+
+    display: grid;
+    place-items: center;
+
+    width: 20px;
+    height: 20px;
+
+    border-radius: 50%;
+
+    background: var(--forest);
+    color: white;
+
+    font-size: 0.7rem;
+    font-weight: 900;
+}
+
+.week-review-card {
+    width: min(720px, 100%);
+}
+
+.modal-close-button {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+
+    width: 36px;
+    height: 36px;
+
+    border: 0;
+    border-radius: 50%;
+
+    background: var(--forest-light);
+    color: var(--forest-dark);
+
+    font-size: 1.6rem;
+    line-height: 1;
+}
+
+.week-review-comparison {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+
+    margin: 18px 0;
+}
+
+.week-review-comparison > div {
+    display: grid;
+    justify-items: center;
+
+    padding: 18px;
+
+    border: 1px solid var(--border);
+    border-radius: 17px;
+
+    background: var(--warm-white);
+
+    text-align: center;
+}
+
+.week-review-emoji {
+    font-size: 4rem;
+}
+
+.week-review-comparison small,
+.week-review-bird-fact small {
+    margin-top: 8px;
+
+    color: var(--forest);
+
+    font-size: 0.66rem;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.week-review-comparison strong {
+    margin-top: 4px;
+
+    color: var(--forest-dark);
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.3rem;
+}
+
+.week-review-comparison p {
+    margin: 8px 0 0;
+
+    color: var(--muted);
+    line-height: 1.45;
+}
+
+.week-review-facts {
+    display: grid;
+    gap: 10px;
+}
+
+.week-review-fact {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+
+    padding: 13px;
+
+    border-radius: 13px;
+
+    background: var(--sage-light);
+}
+
+.week-review-fact > span {
+    font-size: 1.7rem;
+}
+
+.week-review-fact h3 {
+    margin: 0 0 4px;
+
+    color: var(--forest-dark);
+    font-size: 0.95rem;
+}
+
+.week-review-fact p {
+    margin: 0;
+
+    color: var(--muted);
+    line-height: 1.45;
+}
+
+.week-review-bird-fact {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+
+    margin: 15px 0;
+    padding: 14px;
+
+    border-left: 5px solid var(--blue);
+    border-radius: 13px;
+
+    background: #edf5f7;
+}
+
+.week-review-bird-fact > span {
+    font-size: 1.8rem;
+}
+
+.week-review-bird-fact p {
+    margin: 5px 0 0;
+
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+.week-reviewed-checkbox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+    margin-top: 18px;
+    padding: 14px;
+
+    border-radius: 14px;
+
+    background: var(--gold-light);
+
+    cursor: pointer;
+
+    color: #5d4a1e;
+    font-weight: 800;
+}
+
+.week-reviewed-checkbox input {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    opacity: 0;
+}
+
+.week-reviewed-checkbox input:checked + .custom-checkbox {
+    border-color: var(--forest);
+    background: var(--forest);
+    color: white;
+}
+
+@media (max-width: 650px) {
+    .week-review-comparison {
+        grid-template-columns: 1fr;
+    }
+
+    .week-review-card {
+        padding-top: 48px;
+    }
+}
